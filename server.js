@@ -17,9 +17,14 @@ const server = http.createServer(async (req,res) => {
     try {
       const {messages} = JSON.parse(raw);
       if(!Array.isArray(messages) || !messages.length || messages.some(m=>!['user','assistant','system'].includes(m.role)||typeof m.content!=='string')) throw new Error('Invalid messages payload');
-      const upstream=await fetch('https://integrate.api.nvidia.com/v1/chat/completions',{method:'POST',headers:{'content-type':'application/json','authorization':`Bearer ${key}`},body:JSON.stringify({model:process.env.NIM_MODEL||'meta/llama-3.1-8b-instruct',messages,max_tokens:1200})});
-      const data=await upstream.json(); if(!upstream.ok) throw Object.assign(new Error(data.error?.message||`NIM error ${upstream.status}`),{status:upstream.status});
-      res.writeHead(200,{'content-type':'application/json'}); return res.end(JSON.stringify({reply:data.choices?.[0]?.message?.content||''}));
+      if(!messages.some(m=>m.role==='system')) messages.unshift({role:'system',content:'Kamu adalah Rara, konselor AI pintar di aplikasi Futurely untuk pelajar Indonesia. Jawab hangat, ringkas, dan membantu seputar pendidikan, potensi diri, dan karier. Bahasa Indonesia.'});
+      const model=process.env.NIM_MODEL||'google/diffusiongemma-26b-a4b-it';
+      const call=()=>fetch('https://integrate.api.nvidia.com/v1/chat/completions',{method:'POST',headers:{'content-type':'application/json','authorization':`Bearer ${key}`},body:JSON.stringify({model,messages,max_tokens:1200})});
+      let upstream=await call();
+      let data=await upstream.json(); if(!upstream.ok) throw Object.assign(new Error((data.error?.message||data.detail||`NIM error ${upstream.status}`)+` [model: ${model}]`),{status:upstream.status});
+      let reply=data.choices?.[0]?.message?.content||'';
+      if(!reply){ upstream=await call(); data=await upstream.json(); if(upstream.ok) reply=data.choices?.[0]?.message?.content||''; }
+      res.writeHead(200,{'content-type':'application/json'}); return res.end(JSON.stringify({reply}));
     } catch(e) {res.writeHead(e.status||(e instanceof SyntaxError?400:502),{'content-type':'application/json'});return res.end(JSON.stringify({error:e.message||'Request failed'}));}
   }
   const pathname=decodeURIComponent(new URL(req.url,'http://localhost').pathname);
