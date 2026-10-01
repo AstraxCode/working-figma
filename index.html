@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#eef0f5"><title>Proyek Figma Kel Adit</title><link rel="icon" href="data:,"><link rel="stylesheet" href="/style.css"></head>
+<body>
+<div class="stage">
+  <div class="device" id="device">
+    <section class="screen" id="screen-chat" data-screen="chat" hidden>
+      <div class="chat-status"><span>9:41 AM</span><span>Wed Apr 1</span><span class="right">WiFi · 100%</span></div>
+      <header class="chat-head">
+        <button class="hamburger" id="chatHome" aria-label="Kembali ke beranda"><span></span><span></span><span></span></button>
+        <h1>Konsultan AI</h1>
+        <div class="chat-avatar" aria-hidden="true">A</div>
+      </header>
+      <div class="chat-body" id="chatBody" aria-live="polite"></div>
+      <form class="chat-composer" id="chatForm">
+        <input id="chatInput" type="text" placeholder="Tulis pesan..." autocomplete="off" aria-label="Tulis pesan">
+        <button type="submit" class="send" aria-label="Kirim pesan"><svg viewBox="0 0 24 24" width="22" height="22"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M3 11.5 21 3l-8.5 18-2.2-7.3L3 11.5Z"/></svg></button>
+      </form>
+      <nav class="chat-nav" aria-label="Navigasi">
+        <button data-nav="home">Beranda</button><button data-nav="potential">Potensi Diri</button><button data-nav="chat" class="active">Konsultasi</button><button data-nav="settings">Akun</button>
+      </nav>
+    </section>
+  </div>
+  <p class="route-label" id="routeLabel"></p>
+  <p class="hint" id="debugHint"></p>
+</div>
+<script src="/app.js" defer></script></body></html>
